@@ -28,7 +28,7 @@ public class CallDealer : MelonMod
     public override void OnUpdate()
     {
 
-        if (Input.GetKeyDown(KeyCode.N))
+        if (Input.GetKeyDown(KeyCode.N) && ButtonManager.IsDebugMode)
         {
             ButtonManager.LogPlayerPosition();
         }
