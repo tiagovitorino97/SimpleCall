@@ -1,5 +1,5 @@
 ﻿using MelonLoader;
-using CallDealers;
+using SimpleCall;
 
-[assembly: MelonInfo(typeof(CallDealer), "SimpleCall", "1.0.1", "tiagovito")]
+[assembly: MelonInfo(typeof(CallDealers), "SimpleCall", "1.0.1", "tiagovito")]
 [assembly: MelonGame("TVGS", "Schedule I")]
