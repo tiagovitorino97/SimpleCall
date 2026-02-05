@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\tiago\\RiderProjects\\CallDealers\\CallDealers\\CallDealers.csproj",
+      "projectUniqueName": "C:\\Users\\tiago\\Documents\\GitHub\\SimpleCall\\CallDealers.csproj",
       "projectName": "SimpleCall",
-      "projectPath": "C:\\Users\\tiago\\RiderProjects\\CallDealers\\CallDealers\\CallDealers.csproj",
+      "projectPath": "C:\\Users\\tiago\\Documents\\GitHub\\SimpleCall\\CallDealers.csproj",
       "packagesPath": "C:\\Users\\tiago\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\tiago\\RiderProjects\\CallDealers\\CallDealers\\obj\\",
+      "outputPath": "C:\\Users\\tiago\\Documents\\GitHub\\SimpleCall\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -45,7 +45,13 @@
         "warnAsError": [
           "NU1605"
         ]
-      }
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net6.0": {
@@ -66,7 +72,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.414\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Il2CppScheduleOne.NPCs;
 using Il2CppScheduleOne.PlayerScripts;
 using Il2CppScheduleOne.UI.Phone.Messages;
@@ -30,11 +30,11 @@ public static class ButtonManager
     private const int BUTTON_FONT_SIZE = 24;
 
     private static readonly PathConfig[] UI_PATHS = {
-        new("Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/Content",
-            "Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/Content/Cash",
+        new("Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/Content/Container/Details/Container/",
+            "Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/Content/Container/Details/Container/Cash",
             new Vector3(180, 60, 0), false),
-        new("Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/ScrollingContent/Content",
-            "Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/ScrollingContent/Content/Cash",
+        new("Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/ScrollingContent/Content/Container/Details/Container",
+            "Player_Local/CameraContainer/Camera/OverlayCamera/GameplayMenu/Phone/phone/AppsCanvas/DealerManagement/Container/Background/ScrollingContent/Content/Container/Details/Container/Cash",
             new Vector3(190, 387, 0), true)
     };
 

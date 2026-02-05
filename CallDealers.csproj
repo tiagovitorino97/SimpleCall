@@ -43,8 +43,8 @@
         <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Schedule I\MelonLoader\Il2CppAssemblies\UnityEngine.UI.dll</HintPath>
       </Reference>
     </ItemGroup>
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="xcopy /Y /I &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Schedule I\Mods\&quot;&#xA;" />
+    <Target Name="CopyToMods" AfterTargets="Build">
+      <Copy SourceFiles="$(TargetPath)" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Schedule I\Mods" SkipUnchangedFiles="true" />
     </Target>
 
 </Project>
