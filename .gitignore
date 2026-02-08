@@ -11,3 +11,6 @@ obj/
 packages/
 *.nupkg
 project.lock.json
+
+# Distribution (Nexus page content, keep local)
+NEXUS_BBCODE.txt
