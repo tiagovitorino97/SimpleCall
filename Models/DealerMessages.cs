@@ -48,7 +48,22 @@ public static class DealerMessages
         "Leaving now."
     };
 
+    private static readonly string[] GiveUp =
+    {
+        "Can't make it.",
+        "Try again later.",
+        "Call back later.",
+        "Couldn't get there.",
+        "Not possible right now.",
+        "Try later.",
+        "Couldn't make it.",
+        "Call later.",
+        "Not able to come.",
+        "Couldn't get it done."
+    };
+
     public static string GetOnMyWay() => OnMyWay[_random.Next(OnMyWay.Length)];
     public static string GetAtDoor() => AtDoor[_random.Next(AtDoor.Length)];
     public static string GetLeaving() => Leaving[_random.Next(Leaving.Length)];
+    public static string GetGiveUp() => GiveUp[_random.Next(GiveUp.Length)];
 }

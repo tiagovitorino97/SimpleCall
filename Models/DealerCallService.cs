@@ -339,7 +339,9 @@ public static class DealerCallService
 
     private static void GiveUp(NPC dealer, NPCMovement movement, NPCScheduleManager scheduleManager, float originalWalkSpeed, string message)
     {
-        MelonLogger.Error($"[SimpleCall] {message}");
+        MelonLogger.Warning($"[SimpleCall] {message}");
+        if (ModSettings.DealerMessages.Value && dealer != null)
+            dealer.SendTextMessage(DealerMessages.GetGiveUp());
         movement?.Stop();
         if (movement != null && originalWalkSpeed > 0f)
             movement.WalkSpeed = originalWalkSpeed;
