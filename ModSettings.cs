@@ -16,6 +16,7 @@ public static class ModSettings
     public static MelonPreferences_Entry<int> MaxFallbackAttempts { get; private set; }
     public static MelonPreferences_Entry<float> RepathInterval { get; private set; }
     public static MelonPreferences_Entry<int> MaxWaitAtDoor { get; private set; }
+    public static MelonPreferences_Entry<int> GiveUpRadius { get; private set; }
 
     public static MelonPreferences_Entry<bool> EnableLogging { get; private set; }
 
@@ -27,6 +28,8 @@ public static class ModSettings
     private const float REPATH_INTERVAL_MAX = 10f;
     private const int MAX_WAIT_AT_DOOR_MIN = 30;
     private const int MAX_WAIT_AT_DOOR_MAX = 600;
+    private const int GIVE_UP_RADIUS_MIN = 20;
+    private const int GIVE_UP_RADIUS_MAX = 200;
 
     public static void Initialize()
     {
@@ -56,6 +59,8 @@ public static class ModSettings
         RepathInterval.OnEntryValueChanged.Subscribe(OnRepathIntervalChanged);
         MaxWaitAtDoor = AdvancedCategory.CreateEntry("MaxWaitAtDoor", 120, "Max Wait At Door (30-600s)");
         MaxWaitAtDoor.OnEntryValueChanged.Subscribe(OnMaxWaitAtDoorChanged);
+        GiveUpRadius = AdvancedCategory.CreateEntry("GiveUpRadius", 60, "Give Up Radius (20-200)");
+        GiveUpRadius.OnEntryValueChanged.Subscribe(OnGiveUpRadiusChanged);
     }
 
     private static void CreateDebugSettings()
@@ -97,6 +102,14 @@ public static class ModSettings
         return (float)v;
     }
 
+    public static float GetGiveUpRadius()
+    {
+        var v = GiveUpRadius.Value;
+        if (v < GIVE_UP_RADIUS_MIN) return GIVE_UP_RADIUS_MIN;
+        if (v > GIVE_UP_RADIUS_MAX) return GIVE_UP_RADIUS_MAX;
+        return (float)v;
+    }
+
     private static void OnMeetDelayChanged(int _, int newValue) =>
         ClampAndUpdate(MeetDelay, newValue, MEET_DELAY_MIN, MEET_DELAY_MAX);
 
@@ -108,6 +121,9 @@ public static class ModSettings
 
     private static void OnMaxWaitAtDoorChanged(int _, int newValue) =>
         ClampAndUpdate(MaxWaitAtDoor, newValue, MAX_WAIT_AT_DOOR_MIN, MAX_WAIT_AT_DOOR_MAX);
+
+    private static void OnGiveUpRadiusChanged(int _, int newValue) =>
+        ClampAndUpdate(GiveUpRadius, newValue, GIVE_UP_RADIUS_MIN, GIVE_UP_RADIUS_MAX);
 
     private static void ClampAndUpdate(MelonPreferences_Entry<int> entry, int newValue, int min, int max)
     {

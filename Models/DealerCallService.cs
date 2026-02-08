@@ -97,6 +97,7 @@ public static class DealerCallService
         var playerWasOutside = true;
         var sentAtDoorMessage = false;
         var waitingAtDoorSince = -1f;
+        var dealerAwayDistanceAccumulated = 0f;
         GameObject targetMarker = null;
         var dealerId = dealer != null ? dealer.GetInstanceID() : 0;
 
@@ -131,6 +132,19 @@ public static class DealerCallService
                 if (dealerPlayerHistory.Count > GOING_AWAY_SAMPLE_COUNT + 1)
                     dealerPlayerHistory.RemoveAt(0);
 
+                if (dealerPlayerHistory.Count >= 2)
+                {
+                    var prev = dealerPlayerHistory[dealerPlayerHistory.Count - 2];
+                    var curr = dealerPlayerHistory[dealerPlayerHistory.Count - 1];
+                    var dealerDelta = curr.dealer - prev.dealer;
+                    var dirToPlayer = (curr.player - curr.dealer).normalized;
+                    var towardDot = Vector3.Dot(dealerDelta, dirToPlayer);
+                    if (towardDot > 0f)
+                        dealerAwayDistanceAccumulated = 0f;
+                    else if (towardDot < 0f)
+                        dealerAwayDistanceAccumulated += -towardDot;
+                }
+
                 var reachedPlayer = distanceToPlayer <= ARRIVAL_DISTANCE;
 
                 if (reachedPlayer)
@@ -151,8 +165,14 @@ public static class DealerCallService
                 {
                     if (playerOutside)
                     {
-                        GiveUp(dealer, movement, scheduleManager, originalWalkSpeed, "Dealer gave up: moving away from player");
-                        yield break;
+                        var giveUpRadius = ModSettings.GetGiveUpRadius();
+                        var walkedAwayEnough = dealerAwayDistanceAccumulated >= giveUpRadius;
+                        var distanceIncreaseFromDealer = !IsDistanceIncreaseMostlyFromPlayer(dealerPlayerHistory);
+                        if (walkedAwayEnough && distanceIncreaseFromDealer)
+                        {
+                            GiveUp(dealer, movement, scheduleManager, originalWalkSpeed, "Dealer gave up: moving away from player");
+                            yield break;
+                        }
                     }
                     fallbackIndex++;
                     dealerPlayerHistory.Clear();
@@ -335,6 +355,32 @@ public static class DealerCallService
             awayCount++;
         }
         return awayCount >= 5;
+    }
+
+    /// <summary>
+    /// True if the increase in distance over the history is mostly due to the player moving away from the dealer.
+    /// When true, we should not give up (the dealer is not at fault).
+    /// </summary>
+    private static bool IsDistanceIncreaseMostlyFromPlayer(List<(Vector3 dealer, Vector3 player)> history)
+    {
+        if (history.Count < 2)
+            return false;
+        float dealerAwaySum = 0f;
+        float playerAwaySum = 0f;
+        for (var i = 1; i < history.Count; i++)
+        {
+            var prev = history[i - 1];
+            var curr = history[i];
+            var dealerDelta = curr.dealer - prev.dealer;
+            var playerDelta = curr.player - prev.player;
+            var dirToPlayer = (prev.player - prev.dealer).normalized;
+            var dirToDealer = (prev.dealer - prev.player).normalized;
+            var dealerAway = -Vector3.Dot(dealerDelta, dirToPlayer);
+            var playerAway = -Vector3.Dot(playerDelta, dirToDealer);
+            if (dealerAway > 0f) dealerAwaySum += dealerAway;
+            if (playerAway > 0f) playerAwaySum += playerAway;
+        }
+        return playerAwaySum > dealerAwaySum;
     }
 
     private static void GiveUp(NPC dealer, NPCMovement movement, NPCScheduleManager scheduleManager, float originalWalkSpeed, string message)
