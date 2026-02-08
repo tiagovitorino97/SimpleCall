@@ -40,7 +40,7 @@ The "Call Dealer" button appears in the Dealer Management app.
 | Max Fallback Attempts | 8 | 1–20 | Indoor fallback: how many past positions to try |
 | Repath Interval | 2.5s | 0.25–10s | Path recalc frequency; lower = responsive, may lag |
 | Max Wait At Door | 120s | 30–600s | Max time dealer waits outside when you're indoors |
-| Give Up Radius | 60 | 20–200 | Distance dealer walks away before we give up (resets when they walk toward you) |
+| Give Up Radius | 60 | 20–200 | Distance dealer walks away before they give up (resets when they walk toward you) |
 
 ### Debug
 | Setting | Default | Description |
