@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\tiago\\Documents\\GitHub\\SimpleCall\\CallDealers.csproj",
+      "projectUniqueName": "C:\\Users\\tiago\\Desktop\\CODING PROJECTS\\SimpleCall\\SimpleCall.csproj",
       "projectName": "SimpleCall",
-      "projectPath": "C:\\Users\\tiago\\Documents\\GitHub\\SimpleCall\\CallDealers.csproj",
+      "projectPath": "C:\\Users\\tiago\\Desktop\\CODING PROJECTS\\SimpleCall\\SimpleCall.csproj",
       "packagesPath": "C:\\Users\\tiago\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\tiago\\Documents\\GitHub\\SimpleCall\\obj\\",
+      "outputPath": "C:\\Users\\tiago\\Desktop\\CODING PROJECTS\\SimpleCall\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

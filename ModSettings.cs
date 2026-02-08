@@ -1,116 +1,123 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
 using MelonLoader;
 
 namespace SimpleCall;
 
-public class ModSettings
+public static class ModSettings
 {
-    private static MethodInfo _requestUIRefreshMethod;
-    private static bool _isModManagerIntegrated;
-
-    public static MelonPreferences_Category GeneralCategory { get; private set; }
+    public static MelonPreferences_Category BasicCategory { get; private set; }
+    public static MelonPreferences_Category AdvancedCategory { get; private set; }
     public static MelonPreferences_Category DebugCategory { get; private set; }
-    
-    public static MelonPreferences_Entry<bool> ActivateMod { get; private set; }
-    public static MelonPreferences_Entry<bool> ActivateDealerMessages { get; private set; }
-    public static MelonPreferences_Entry<int> DealerAwaitTime { get; private set; }
-    public static MelonPreferences_Entry<int> DealerInteractionDistance { get; private set; }
-    
-    public static MelonPreferences_Entry<bool> ActivateDebug { get; private set; }
-    public static MelonPreferences_Entry<bool> ActivatePositionLogging { get; private set; }
-    
+
+    public static MelonPreferences_Entry<int> MeetDelay { get; private set; }
+    public static MelonPreferences_Entry<bool> DealerRunsToPlayer { get; private set; }
+    public static MelonPreferences_Entry<bool> ShowNoSignalNotification { get; private set; }
+    public static MelonPreferences_Entry<bool> DealerMessages { get; private set; }
+
+    public static MelonPreferences_Entry<int> MaxFallbackAttempts { get; private set; }
+    public static MelonPreferences_Entry<float> RepathInterval { get; private set; }
+    public static MelonPreferences_Entry<int> MaxWaitAtDoor { get; private set; }
+
+    public static MelonPreferences_Entry<bool> EnableLogging { get; private set; }
+
+    private const int MEET_DELAY_MIN = 1;
+    private const int MEET_DELAY_MAX = 120;
+    private const int MAX_FALLBACK_ATTEMPTS_MIN = 1;
+    private const int MAX_FALLBACK_ATTEMPTS_MAX = 20;
+    private const float REPATH_INTERVAL_MIN = 0.25f;
+    private const float REPATH_INTERVAL_MAX = 10f;
+    private const int MAX_WAIT_AT_DOOR_MIN = 30;
+    private const int MAX_WAIT_AT_DOOR_MAX = 600;
+
     public static void Initialize()
     {
-        CreateGeneralSettings();
+        CreateBasicSettings();
+        CreateAdvancedSettings();
         CreateDebugSettings();
     }
 
-    public static void InitializeModIntegration()
+    private static void CreateBasicSettings()
     {
-        if (_isModManagerIntegrated) return;
-        
-        try
-        {
-            var modManagerAssembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetType("ModManagerPhoneApp.ModSettingsEvents") != null);
+        BasicCategory = MelonPreferences.CreateCategory("SimpleCall_01_Basic", "Basic");
 
-            if (modManagerAssembly == null) return;
-            
-            var eventsType = modManagerAssembly.GetType("ModManagerPhoneApp.ModSettingsEvents");
-            _requestUIRefreshMethod = eventsType?.GetMethod("RequestUIRefresh");
-            _isModManagerIntegrated = _requestUIRefreshMethod != null;
-            
-            if (_isModManagerIntegrated)
-                MelonLogger.Msg("Mod Manager integration initialized successfully");
-        }
-        catch (Exception ex)
-        {
-            MelonLogger.Error($"Failed to initialize Mod Manager integration: {ex.Message}");
-        }
+        MeetDelay = BasicCategory.CreateEntry("MeetDelay", 10, "Meet Delay (1-120s)");
+        MeetDelay.OnEntryValueChanged.Subscribe(OnMeetDelayChanged);
+        DealerRunsToPlayer = BasicCategory.CreateEntry("DealerRunsToPlayer", true, "Allow Dealer Run");
+        ShowNoSignalNotification = BasicCategory.CreateEntry("ShowNoSignalNotification", true, "No Signal Notification");
+        DealerMessages = BasicCategory.CreateEntry("DealerMessages", true, "Dealer Messages");
     }
 
-    private static void CreateGeneralSettings()
+    private static void CreateAdvancedSettings()
     {
-        GeneralCategory = MelonPreferences.CreateCategory("SimpleCall_01_General", "General");
-        
-        ActivateMod = GeneralCategory.CreateEntry("ActivateMod", true, "Activate Mod");
-        ActivateMod.OnEntryValueChanged.Subscribe(OnActivateModChanged);
-        
-        ActivateDealerMessages = GeneralCategory.CreateEntry("ActivateDealerMessages", true, "Activate Dealer Messages");
-        DealerAwaitTime = GeneralCategory.CreateEntry("DealerAwaitTime", 15, "Dealer Await Time (Default 15)");
-        DealerInteractionDistance = GeneralCategory.CreateEntry("DealerInteractionDistance", 3, "Dealer Interaction Distance (Default 3)");
-        
-        // Subscribe to simple value change events (no special handling needed)
-        ActivateDealerMessages.OnEntryValueChanged.Subscribe((_, _) => { });
-        DealerAwaitTime.OnEntryValueChanged.Subscribe((_, _) => { });
-        DealerInteractionDistance.OnEntryValueChanged.Subscribe((_, _) => { });
+        AdvancedCategory = MelonPreferences.CreateCategory("SimpleCall_02_Advanced", "Advanced");
+
+        MaxFallbackAttempts = AdvancedCategory.CreateEntry("MaxFallbackAttempts", 8, "Max Fallback Attempts (1-20)");
+        MaxFallbackAttempts.OnEntryValueChanged.Subscribe(OnMaxFallbackAttemptsChanged);
+        RepathInterval = AdvancedCategory.CreateEntry("RepathInterval", 2.5f, "Repath Interval (0.25-10s)");
+        RepathInterval.OnEntryValueChanged.Subscribe(OnRepathIntervalChanged);
+        MaxWaitAtDoor = AdvancedCategory.CreateEntry("MaxWaitAtDoor", 120, "Max Wait At Door (30-600s)");
+        MaxWaitAtDoor.OnEntryValueChanged.Subscribe(OnMaxWaitAtDoorChanged);
     }
-    
+
     private static void CreateDebugSettings()
     {
-        DebugCategory = MelonPreferences.CreateCategory("SimpleCall_02_Debug", "Debug");
-        
-        ActivateDebug = DebugCategory.CreateEntry("ActivateDebug", false, "Debug");
-        ActivatePositionLogging = DebugCategory.CreateEntry("ActivatePositionLogging", false, "Position Logging (N key)");
-        
-        // Subscribe to simple value change events (no special handling needed)
-        ActivateDebug.OnEntryValueChanged.Subscribe((_, _) => { });
-        ActivatePositionLogging.OnEntryValueChanged.Subscribe((_, _) => { });
+        DebugCategory = MelonPreferences.CreateCategory("SimpleCall_03_Debug", "Debug");
+
+        EnableLogging = DebugCategory.CreateEntry("EnableLogging", false, "Debug Logging");
     }
 
-    private static void OnActivateModChanged(bool oldValue, bool newValue)
+    public static float GetMeetDelay()
     {
-        if (newValue)
-        {
-            MelonLogger.Msg("Mod has been activated");
-            ButtonManager.Initialize(); 
-        }
-
-        else
-        {
-            MelonLogger.Msg("Mod has been deactivated");
-            ButtonManager.Terminate();
-        }
+        var v = MeetDelay.Value;
+        if (v < MEET_DELAY_MIN) return MEET_DELAY_MIN;
+        if (v > MEET_DELAY_MAX) return MEET_DELAY_MAX;
+        return (float)v;
     }
 
-    public static void RequestUIRefresh() //Maybe useful in the future
+    public static int GetMaxFallbackAttempts()
     {
-        if (!_isModManagerIntegrated) return;
-        
-        try
-        {
-            _requestUIRefreshMethod?.Invoke(null, null);
-        }
-        catch (Exception ex)
-        {
-            MelonLogger.Error($"Failed to request UI refresh: {ex.Message}");
-        }
+        var v = MaxFallbackAttempts.Value;
+        if (v < MAX_FALLBACK_ATTEMPTS_MIN) return MAX_FALLBACK_ATTEMPTS_MIN;
+        if (v > MAX_FALLBACK_ATTEMPTS_MAX) return MAX_FALLBACK_ATTEMPTS_MAX;
+        return v;
     }
-    
-    public static void Terminate()
+
+    public static float GetRepathInterval()
     {
-        // Add any cleanup logic here if needed in the future
+        var v = RepathInterval.Value;
+        if (v < REPATH_INTERVAL_MIN) return REPATH_INTERVAL_MIN;
+        if (v > REPATH_INTERVAL_MAX) return REPATH_INTERVAL_MAX;
+        return v;
+    }
+
+    public static float GetMaxWaitAtDoor()
+    {
+        var v = MaxWaitAtDoor.Value;
+        if (v < MAX_WAIT_AT_DOOR_MIN) return MAX_WAIT_AT_DOOR_MIN;
+        if (v > MAX_WAIT_AT_DOOR_MAX) return MAX_WAIT_AT_DOOR_MAX;
+        return (float)v;
+    }
+
+    private static void OnMeetDelayChanged(int _, int newValue) =>
+        ClampAndUpdate(MeetDelay, newValue, MEET_DELAY_MIN, MEET_DELAY_MAX);
+
+    private static void OnMaxFallbackAttemptsChanged(int _, int newValue) =>
+        ClampAndUpdate(MaxFallbackAttempts, newValue, MAX_FALLBACK_ATTEMPTS_MIN, MAX_FALLBACK_ATTEMPTS_MAX);
+
+    private static void OnRepathIntervalChanged(float _, float newValue) =>
+        ClampAndUpdate(RepathInterval, newValue, REPATH_INTERVAL_MIN, REPATH_INTERVAL_MAX);
+
+    private static void OnMaxWaitAtDoorChanged(int _, int newValue) =>
+        ClampAndUpdate(MaxWaitAtDoor, newValue, MAX_WAIT_AT_DOOR_MIN, MAX_WAIT_AT_DOOR_MAX);
+
+    private static void ClampAndUpdate(MelonPreferences_Entry<int> entry, int newValue, int min, int max)
+    {
+        if (newValue >= min && newValue <= max) return;
+        entry.Value = newValue < min ? min : max;
+    }
+
+    private static void ClampAndUpdate(MelonPreferences_Entry<float> entry, float newValue, float min, float max)
+    {
+        if (newValue >= min && newValue <= max) return;
+        entry.Value = newValue < min ? min : max;
     }
 }
