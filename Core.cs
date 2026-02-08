@@ -1,6 +1,6 @@
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(SimpleCall.Core), "SimpleCall", "1.2.0", "Tiagovito", null)]
+[assembly: MelonInfo(typeof(SimpleCall.Core), "SimpleCall", "1.2.1", "Tiagovito", null)]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace SimpleCall

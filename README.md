@@ -40,6 +40,7 @@ The "Call Dealer" button appears in the Dealer Management app.
 | Max Fallback Attempts | 8 | 1–20 | Indoor fallback: how many past positions to try |
 | Repath Interval | 2.5s | 0.25–10s | Path recalc frequency; lower = responsive, may lag |
 | Max Wait At Door | 120s | 30–600s | Max time dealer waits outside when you're indoors |
+| Give Up Radius | 60 | 20–200 | Distance dealer walks away before we give up (resets when they walk toward you) |
 
 ### Debug
 | Setting | Default | Description |
@@ -64,5 +65,7 @@ SimpleCall/
 - [Nexus Mods](https://www.nexusmods.com/schedule1/mods/996)
 
 ## Version
+
+**1.2.1**: Smarter give-up logic: Give Up Radius (distance dealer walks away, not raw distance), resets when dealer walks toward you; ignore give-up when player moved away more than dealer.
 
 **1.2.0**: Rewrite with MVC structure, pathfinding, indoor fallback, dealer messages, and full settings.
